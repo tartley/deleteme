@@ -51,7 +51,7 @@ to make four in a row horizontally, vertically, or diagonally.
         # Switch turns to other player:
         if playerTurn == PLAYER_X:
             playerTurn = PLAYER_O
-        elif playerTurn == PLAYER_O:
+        else:
             playerTurn = PLAYER_X
 
 
@@ -60,11 +60,11 @@ def getNewBoard():
 
     The keys are (x, y) tuples of two integers, and the values are one
     of the 'X', 'O' or '.' (empty space) strings."""
-    board = {}
-    for y in range(6):
-        for x in range(7):
-            board[(x, y)] = EMPTY_SPACE
-    return board
+    return {
+        (x, y): EMPTY_SPACE
+        for y in range(6)
+        for x in range(7)
+    }
 
 
 def displayBoard(board):
@@ -73,10 +73,9 @@ def displayBoard(board):
     # Prepare a list to pass to the format() string method for the board
     # template. The list holds all of the board's tiles (and empty
     # spaces) going left to right, top to bottom:
-    tileChars = []
     for y in range(6):
         for x in range(7):
-            tileChars.append(board[(x, y)])
+            tileChars.append(board[x, y])
 
     # Display the board:
     print(BOARD_TEMPLATE.format(*tileChars))
@@ -96,7 +95,7 @@ def getPlayerMove(playerTile, board):
         if move not in ('1', '2', '3', '4', '5', '6', '7'):
             print('Enter a number from 1 to 7.')
             input('Press Enter to continue...')
-            continue # Ask again for their move.
+            continue # Go back to start of loop to ask again for their move.
 
         move = int(move) - 1 # The -1 adjusts for 0-based index.
 
@@ -104,7 +103,7 @@ def getPlayerMove(playerTile, board):
         for i in range(5, -1, -1):
             if board[(move, i)] == EMPTY_SPACE:
                 return (move, i)
-        # At this point, go back to the start of the loop.
+
 
 
 def isFull(board):
@@ -120,44 +119,43 @@ def isFull(board):
 def isWinner(playerTile, board):
     """Returns True if `playerTile` has four tiles in a row on `board`,
     otherwise returns False."""
-    b = board # Syntactic sugar - a shorter name instead of `board`.
 
     # Go through the entire board, checking for four-in-a-row:
     for x in range(4):
         for y in range(6):
             # Check for four-in-a-row going across to the right:
-            space1 = b[(x, y)]
-            space2 = b[(x + 1, y)]
-            space3 = b[(x + 2, y)]
-            space4 = b[(x + 3, y)]
+            space1 = board[(x, y)]
+            space2 = board[(x + 1, y)]
+            space3 = board[(x + 2, y)]
+            space4 = board[(x + 3, y)]
             if space1 == space2 == space3 == space4 == playerTile:
                 return True
 
     for x in range(7):
         for y in range(3):
             # Check for four-in-a-row going down:
-            space1 = b[(x, y)]
-            space2 = b[(x, y + 1)]
-            space3 = b[(x, y + 2)]
-            space4 = b[(x, y + 3)]
+            space1 = board[(x, y)]
+            space2 = board[(x, y + 1)]
+            space3 = board[(x, y + 2)]
+            space4 = board[(x, y + 3)]
             if space1 == space2 == space3 == space4 == playerTile:
                 return True
 
     for x in range(4):
         for y in range(3):
             # Check for four-in-a-row going right-down diagonal:
-            space1 = b[(x, y)]
-            space2 = b[(x + 1, y + 1)]
-            space3 = b[(x + 2, y + 2)]
-            space4 = b[(x + 3, y + 3)]
+            space1 = board[(x, y)]
+            space2 = board[(x + 1, y + 1)]
+            space3 = board[(x + 2, y + 2)]
+            space4 = board[(x + 3, y + 3)]
             if space1 == space2 == space3 == space4 == playerTile:
                 return True
 
             # Check for four-in-a-row going left-down diagonal:
-            space1 = b[(x + 3, y)]
-            space2 = b[(x + 2, y + 1)]
-            space3 = b[(x + 1, y + 2)]
-            space4 = b[(x, y + 3)]
+            space1 = board[(x + 3, y)]
+            space2 = board[(x + 2, y + 1)]
+            space3 = board[(x + 1, y + 2)]
+            space4 = board[(x, y + 3)]
             if space1 == space2 == space3 == space4 == playerTile:
                 return True
     return False
